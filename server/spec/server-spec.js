@@ -16,11 +16,13 @@ describe("Persistent Node Chat Server", function() {
     });
     dbConnection.connect();
 
-       var tablename = ""; // TODO: fill this out
+    var tablenames = ['messages', 'users', 'rooms', 'friends'];
 
-    /* Empty the db table before each test so that multiple tests
+    /* Empty the db tables before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query("truncate " + tablename, done);
+    for(var i = 0; i < tablenames; i++){
+      dbConnection.query("truncate " + tablenames[i], done);  
+    }
   });
 
   afterEach(function() {
@@ -54,8 +56,7 @@ describe("Persistent Node Chat Server", function() {
           // Should have one result:
           expect(results.length).to.equal(1);
 
-          // TODO: If you don't have a column named text, change this test.
-          expect(results[0].text).to.equal("In mercy's name, three days is all I need.");
+          expect(results[0].message).to.equal("In mercy's name, three days is all I need.");
 
           done();
         });
@@ -65,10 +66,25 @@ describe("Persistent Node Chat Server", function() {
 
   it("Should output all messages from the DB", function(done) {
     // Let's insert a message into the db
-       var tablename = ""; // TODO: fill this out
+       var tablename = "messages"; // TODO: fill this out
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
+
+      var queryString = "INSERT INTO users (name) VALUES ('Javert')";
+      var queryArgs = [];
+
+    dbConnection.query(queryString, queryArgs, function(err) {
+      if (err) { throw err; }
+
+      var queryString = "INSERT INTO rooms (name) VALUES ('paris')";
+      var queryArgs = [];
+
+    dbConnection.query(queryString, queryArgs, function(err) {
+      if (err) { throw err; }
+
+      var queryString = "INSERT INTO messages (message, room, user) VALUES ('Men like you can never change!', 1, 1)";
+      var queryArgs = [];
 
     dbConnection.query(queryString, queryArgs, function(err) {
       if (err) { throw err; }
@@ -78,7 +94,7 @@ describe("Persistent Node Chat Server", function() {
       request("http://127.0.0.1:3000/classes/messages", function(error, response, body) {
         var messageLog = JSON.parse(body);
         expect(messageLog[0].text).to.equal("Men like you can never change!");
-        expect(messageLog[0].roomname).to.equal("main");
+        expect(messageLog[0].roomname).to.equal("paris");
         done();
       });
     });
