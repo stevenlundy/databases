@@ -4,10 +4,13 @@ module.exports = {
   messages: {
     // a function which produces all the messages
     get: function (callback) {
-      db.Message.findAll({include: [ 
-        {model: db.User, as: 'User', attributes: ['username'], required: true},
-        {model: db.Room, as: 'Room', attributes: ['roomname'], required: true}
-      ]}).then(function(messages) {
+      db.Message.findAll({
+        order: 'createdAt ASC',
+        include: [ 
+          {model: db.User, as: 'User', attributes: ['username'], required: true},
+          {model: db.Room, as: 'Room', attributes: ['roomname'], required: true}
+        ]
+      }).then(function(messages) {
         callback(messages.map(function(message) {
           return {
             username: message.User.username,
@@ -21,7 +24,7 @@ module.exports = {
     }, 
     // a function which can be used to insert a message into the database
     post: function (data, callback) {
-      db.Message.sync({force: true}).then(function(){
+      db.Message.sync().then(function(){
         db.User.findOrCreate({where: {username: data.username}}).spread(function(user, created) {
           db.Room.findOrCreate({where: {roomname: data.roomname}}).spread(function(room) {
             var userId = user.get('id');
