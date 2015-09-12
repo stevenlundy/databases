@@ -16,13 +16,16 @@ describe("Persistent Node Chat Server", function() {
     });
     dbConnection.connect();
 
-    var tablenames = ['messages', 'users', 'rooms', 'friends'];
+    dbConnection.query("truncate " + 'messages', done);  
 
-    /* Empty the db tables before each test so that multiple tests
-     * (or repeated runs of the tests) won't screw each other up: */
-    for(var i = 0; i < tablenames; i++){
-      dbConnection.query("truncate " + tablenames[i], done);  
-    }
+    // var tablenames = ['messages', 'users', 'rooms', 'friends'];
+
+    //  Empty the db tables before each test so that multiple tests
+    //  * (or repeated runs of the tests) won't screw each other up: 
+    // for(var i = 0; i < tablenames; i++){
+    //   dbConnection.query("truncate " + tablenames[i], done);  
+    // }
+
   });
 
   afterEach(function() {
@@ -33,16 +36,16 @@ describe("Persistent Node Chat Server", function() {
     // Post the user to the chat server.
     request({ method: "POST",
               uri: "http://127.0.0.1:3000/classes/users",
-              json: { username: "Valjean" }
+              json: JSON.stringify({ username: "Valjean" })
     }, function () {
       // Post a message to the node chat server:
       request({ method: "POST",
               uri: "http://127.0.0.1:3000/classes/messages",
-              json: {
+              json: JSON.stringify({
                 username: "Valjean",
-                message: "In mercy's name, three days is all I need.",
+                text: "In mercy's name, three days is all I need.",
                 roomname: "Hello"
-              }
+              })
       }, function () {
         // Now if we look in the database, we should find the
         // posted message there.
@@ -56,7 +59,7 @@ describe("Persistent Node Chat Server", function() {
           // Should have one result:
           expect(results.length).to.equal(1);
 
-          expect(results[0].message).to.equal("In mercy's name, three days is all I need.");
+          expect(results[0].text).to.equal("In mercy's name, three days is all I need.");
 
           done();
         });
@@ -66,37 +69,36 @@ describe("Persistent Node Chat Server", function() {
 
   it("Should output all messages from the DB", function(done) {
     // Let's insert a message into the db
-       var tablename = "messages"; // TODO: fill this out
+    var tablename = "messages"; // TODO: fill this out
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
 
-      var queryString = "INSERT INTO users (name) VALUES ('Javert')";
-      var queryArgs = [];
+    var queryString = "INSERT INTO users (name) VALUES ('Javert')";
+    var queryArgs = [];
 
     dbConnection.query(queryString, queryArgs, function(err) {
       if (err) { throw err; }
+    });
 
-      var queryString = "INSERT INTO rooms (name) VALUES ('paris')";
-      var queryArgs = [];
-
+    var queryString = "INSERT INTO rooms (name) VALUES ('paris')";
+    var queryArgs = [];
     dbConnection.query(queryString, queryArgs, function(err) {
       if (err) { throw err; }
+    });
 
-      var queryString = "INSERT INTO messages (message, room, user) VALUES ('Men like you can never change!', 1, 1)";
-      var queryArgs = [];
-
+    var queryString = "INSERT INTO messages (message, room, user) VALUES ('Men like you can never change!', 1, 1)";
+    var queryArgs = [];
     dbConnection.query(queryString, queryArgs, function(err) {
       if (err) { throw err; }
-
-      // Now query the Node chat server and see if it returns
-      // the message we just inserted:
-      request("http://127.0.0.1:3000/classes/messages", function(error, response, body) {
-        var messageLog = JSON.parse(body);
-        expect(messageLog[0].text).to.equal("Men like you can never change!");
-        expect(messageLog[0].roomname).to.equal("paris");
-        done();
-      });
+    });
+    // Now query the Node chat server and see if it returns
+    // the message we just inserted:
+    request("http://127.0.0.1:3000/classes/messages", function(error, response, body) {
+      var messageLog = JSON.parse(body);
+      expect(messageLog[0].text).to.equal("Men like you can never change!");
+      expect(messageLog[0].roomname).to.equal("paris");
+      done();
     });
   });
 });

@@ -82,6 +82,33 @@ module.exports = {
         }
       })
     }
+  },
+
+  rooms: {
+    // Ditto as above.
+    get: function (callback) {
+      var queryString = "SELECT name AS roomname FROM rooms";
+      var queryArgs = [];
+
+      db.query(queryString, queryArgs, function(err, results){
+        if(err){
+          console.log(err);
+        } else {
+          callback(results);
+        }
+      });
+    },
+    post: function (data, callback) {
+      var queryString = "INSERT INTO rooms (name) VALUES (?)";
+      var queryArgs = [data.roomname];
+      db.query(queryString, queryArgs, function(err, results){
+        if(err){
+          console.log(err);
+        } else if (callback){
+          callback();
+        }
+      })
+    }
   }
 };
 
