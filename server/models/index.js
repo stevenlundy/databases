@@ -19,12 +19,53 @@ module.exports = {
       });
     }, 
     // a function which can be used to insert a message into the database
-    post: function () {
+    post: function (data, callback) {
+      // Get userid from usertable
+      // Get roomid from roomtable
+      var queryString = "SELECT id AS userId FROM users WHERE name = ?; SELECT id AS roomId FROM rooms WHERE name = ?";
+      var queryArgs = [data.username, data.roomname];
       db.connect();
+      db.query(queryString, queryArgs, function(err, results){
+        db.end();
+        if(err){
+          console.log(err);
+        } else {
+          var userId;
+          var roomId;
+          for (var i = 0; i < results.length; i++) {
+            userId = userId || results[i].userId;
+            roomId = roomId || results[i].roomId;
+          }
 
+          var queryString = "";
+          var queryArgs = [];
 
+          if (userId === undefined) {
+            queryString += "INSERT INTO users (name) VALUES (?);";
+            queryArgs.push(data.username);
+          }
 
-      db.end();
+          if (roomId === undefined) {
+            queryString += "INSERT INTO rooms (name) VALUES (?);";
+            queryArgs.push(data.roomname);
+          }
+
+          queryString += "INSERT INTO messages (user, room, message) VALUES (
+            (SELECT id FROM users WHERE name = ?), (SELECT id FROM rooms WHERE name = ?), ?)";
+          queryArgs.push(data.username, data.roomname, data.text);
+
+          db.connect();
+          db.query(queryString, queryArgs, function(err, results) {
+            db.end();
+            if(err) {
+              console.log(err);
+            } else if (callback) {
+              callback();
+            }
+          });
+        }
+
+      });
     } 
   },
 
