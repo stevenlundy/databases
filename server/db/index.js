@@ -10,5 +10,5 @@ var dbConnection = mysql.createConnection({
   database: "chat",
   multipleStatements: true
 });
-
+dbConnection.connect();
 module.exports = dbConnection;
