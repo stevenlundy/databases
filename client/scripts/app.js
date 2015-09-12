@@ -27,12 +27,9 @@ var app = {
     app.$chats = $('#chats');
     app.$roomSelect = $('#roomSelect');
     app.$send = $('#send');
-    app.$newRoom = $('#newRoom');
-    app.$addRoom = $('#addRoom');
 
     // Add listeners
     app.$main.on('click', '.username', app.addFriend);
-    app.$addRoom.on('click', app.addNewRoom);
     app.$send.on('submit', app.handleSubmit);
     app.$roomSelect.on('change', app.saveRoom);
 
@@ -150,13 +147,6 @@ var app = {
 
     // Add to select
     app.$roomSelect.append($option);
-  },
-
-  addNewRoom: function() {
-    var roomname = app.$newRoom.val();
-    app.addRoom(roomname);
-    app.$newRoom.val('');
-    app.roomname = roomname;
   },
 
   addMessage: function(data) {
