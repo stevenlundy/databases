@@ -156,18 +156,18 @@ var app = {
     // Only add messages that are in our current room
     if (data.roomname === app.roomname) {
       // Create a div to hold the chats
-      var $chat = $('<div class="chat"/>');
+      var $chat = $('<div class="chat" />');
 
       // Add in the message data using DOM methods to avoid XSS
       // Store the username in the element's data
-      var $username = $('<span class="username"/>');
+      var $username = $('<div class="username"/>');
       $username.text(data.username+': ').attr('data-username', data.username).attr('data-roomname',data.roomname).appendTo($chat);
 
       // Add the friend class
       if (app.friends[data.username] === true)
         $username.addClass('friend');
 
-      var $message = $('<br><span/>');
+      var $message = $('<div class="user'+data.userId+'"/>');
       $message.text(data.text).appendTo($chat);
 
       // Add the message to the UI

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>chatterbox</title>
     <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/userstyle.css" id="userstyle">
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -25,7 +26,25 @@
       <form action="#" id="send" method="post">
         <input type="text" name="message" id="message"/>
         <input type="submit" name="submit" class="submit"/>
-      </form>    </div>
+      </form>
+      <div>
+      </div>
+        Font:
+        <select id="font-family">
+          <option value='arial' selected="selected">Arial</option>
+          <option value='times'>Times New Roman</option>
+          <option value='brush script mt'>Brush Script</option>
+          <option value='comic sans ms'>Comic</option>
+        </select>
+        Color:
+        <select id="font-color">
+          <option value='black' selected="selected">Black</option>
+          <option value='blue'>Blue</option>
+          <option value='red'>Red</option>
+          <option value='peach'>Peach</option>
+        </select>
+      </div>
+    </div>
     <div id="chats"></div>
 
     <script>

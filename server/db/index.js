@@ -6,7 +6,9 @@ var sequelize = new Sequelize("chatter", "root", "");
 /* first define the data structure by giving property names and datatypes
  * See http://sequelizejs.com for other datatypes you can use besides STRING. */
 var User = sequelize.define('User', {
-  username: Sequelize.STRING(20)
+  username: Sequelize.STRING(20),
+  fontFamily: { type: Sequelize.STRING(30), defaultValue: 'arial' },
+  fontColor: { type: Sequelize.STRING(15), defaultValue: 'green' }
 });
 
 var Message = sequelize.define('Message', {
@@ -29,9 +31,9 @@ Message.belongsTo(User);
 User.belongsToMany(User, { as: 'Friender', through: 'friends', foreignKey: 'id' });
 User.belongsToMany(User, { as: 'Friendee', through: 'friends', foreignKey: 'id' });
 
-User.sync().then(function(){
-  Room.sync().then(function(){
-    Message.sync().then(function(){
+User.sync({force: true}).then(function(){
+  Room.sync({force: true}).then(function(){
+    Message.sync({force: true}).then(function(){
       module.exports.User = User;
       module.exports.Room = Room;
       module.exports.Message = Message;

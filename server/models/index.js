@@ -14,6 +14,7 @@ module.exports = {
         callback(messages.map(function(message) {
           return {
             username: message.User.username,
+            userId: message.UserId,
             roomname: message.Room.roomname,
             createdAt: message.createdAt,
             text: message.text,

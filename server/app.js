@@ -7,6 +7,7 @@ var parser = require('body-parser');
 
 // Router
 var router = require('./routes.js');
+var styleRouter = require('./styles.js');
 
 var app = express();
 module.exports.app = app;
@@ -27,6 +28,8 @@ app.use(parser.json());
 
 // Set up our routes
 app.use("/classes", router);
+
+app.use("/styles", styleRouter);
 
 // Serve the client files
 app.use(express.static(__dirname + "/../client"));
