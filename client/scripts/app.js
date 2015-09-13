@@ -3,7 +3,7 @@ var app = {
 
   //TODO: The current 'addFriend' function just adds the class 'friend'
   //to all messages sent by the user
-  server: 'http://127.0.0.1:3000/classes/messages',
+  server: 'http://127.0.0.1:3000/classes/',
   username: 'anonymous',
   roomname: 'Lobby',
   lastMessageId: 0,
@@ -27,11 +27,15 @@ var app = {
     app.$chats = $('#chats');
     app.$roomSelect = $('#roomSelect');
     app.$send = $('#send');
+    app.$fontFamily = $('#font-family');
+    app.$fontColor = $('#font-color');
 
     // Add listeners
     app.$main.on('click', '.username', app.addFriend);
     app.$send.on('submit', app.handleSubmit);
     app.$roomSelect.on('change', app.saveRoom);
+    app.$fontFamily.on('change', app.postUser);
+    app.$fontColor.on('change', app.postUser);
 
     // Fetch previous messages
     app.startSpinner();
@@ -48,7 +52,7 @@ var app = {
 
     // POST the message to the server
     $.ajax({
-      url: app.server,
+      url: app.server+'messages',
       type: 'POST',
       data: JSON.stringify(data),
       contentType: 'application/json',
@@ -64,7 +68,7 @@ var app = {
 
   fetch: function(animate) {
     $.ajax({
-      url: app.server,
+      url: app.server+'messages',
       type: 'GET',
       contentType: 'application/json',
       data: { order: '-createdAt'},
@@ -86,10 +90,33 @@ var app = {
 
           // Store the ID of the most recent message
           app.lastMessageId = mostRecentMessage.objectId;
+
+          // Update Message Style
+          app.updateUserStyle();
         }
       },
       error: function(data) {
         console.error('chatterbox: Failed to fetch messages');
+      }
+    });
+  },
+
+  postUser: function(){
+    var data = {
+      username: app.username,
+      fontFamily: app.$fontFamily.val(),
+      fontColor: app.$fontColor.val()
+    };
+    $.ajax({
+      url: app.server+'users',
+      type: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(data){
+        app.updateUserStyle();
+      },
+      error: function(data){
+        console.error('Failed to update/create user');
       }
     });
   },
@@ -139,6 +166,10 @@ var app = {
 
     // Select the menu option
     app.$roomSelect.val(app.roomname);
+  },
+
+  updateUserStyle: function(){
+    $('#userstyle').attr('href', 'styles/userstyle.css');
   },
 
   addRoom: function(roomname) {

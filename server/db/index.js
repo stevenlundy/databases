@@ -31,9 +31,9 @@ Message.belongsTo(User);
 User.belongsToMany(User, { as: 'Friender', through: 'friends', foreignKey: 'id' });
 User.belongsToMany(User, { as: 'Friendee', through: 'friends', foreignKey: 'id' });
 
-User.sync({force: true}).then(function(){
-  Room.sync({force: true}).then(function(){
-    Message.sync({force: true}).then(function(){
+User.sync().then(function(){
+  Room.sync().then(function(){
+    Message.sync().then(function(){
       module.exports.User = User;
       module.exports.Room = Room;
       module.exports.Message = Message;

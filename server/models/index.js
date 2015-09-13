@@ -50,8 +50,9 @@ module.exports = {
       });
     },
     post: function (data, callback) {
-      var newUser = db.User.build({username: data.username});
-      newUser.save().then(callback);
+      db.User.findOrCreate({where: {username: data.username}}).spread(function(user, created) {
+        user.updateAttributes({fontFamily: data.fontFamily, fontColor: data.fontColor}).then(callback);
+      });
     }
   },
 
